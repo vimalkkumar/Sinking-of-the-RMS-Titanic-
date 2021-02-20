@@ -1,0 +1,2 @@
+# Sinking-of-the-RMS-Titanic-
+The RMS Titanic was a British passenger liner that sank in the North Atlantic Ocean in the early morning hours of 15 April 1912, after it collided with an iceberg during its maiden voyage from Southampton to New York City. The Titanic was built by the Harland and Wolff shipyard in Belfast. Thomas Andrews, her architect, died in the disaster. The training set has 891 examples and 11 features the target variable (survived).
