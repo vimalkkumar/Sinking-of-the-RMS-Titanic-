@@ -63,13 +63,52 @@ for i in range(len(test.AgeGroup)):
         test.AgeGroup[i] = age_title_map[test.Title[i]]
         
         
-# # Mapping the each Age value to its respective numerical value
-# age_map = {'Baby': 0, 'Child' : 1, 'Teenager': 2, 'Student': 3, 'Young Adult': 4, 'Adult': 5, 'Senior': 6}
+# Mapping the each Age value to its respective numerical value
+age_map = {'Baby': 0, 'Child' : 1, 'Teenager': 2, 'Student': 3, 'Young Adult': 4, 'Adult': 5, 'Senior': 6}
 
-# # Mapping the Age numerical value in both dataset(Train, Test)
-# train['AgeGroup'] = train['AgeGroup'].map(age_map)
-# test['AgeGroup'] = test['AgeGroup'].map(age_map)
+# Mapping the Age numerical value in both dataset(Train, Test)
+train['AgeGroup'] = train['AgeGroup'].map(age_map)
+test['AgeGroup'] = test['AgeGroup'].map(age_map)
 
-# PassengerId - Droping it
+# Handling Cabin and Creating new feature named Deck 
+# Keeping all the first letters of Cabin in a new variable and using 'M' for each missing
+train['Deck'] = train['Cabin'].apply(lambda m: m[0] if pd.notnull(m) else 'M')
+test['Deck'] = test['Cabin'].apply(lambda m: m[0] if pd.notnull(m) else 'M')
 
+# Grouping the Deck
+train['Deck'] = train['Deck'].replace(['A', 'B', 'C', 'T'], 'ABC')
+train['Deck'] = train['Deck'].replace(['D', 'E'], 'DE')
+train['Deck'] = train['Deck'].replace(['F', 'G'], 'FG')
 
+test['Deck'] = test['Deck'].replace(['A', 'B', 'C', 'T'], 'ABC')
+test['Deck'] = test['Deck'].replace(['D', 'E'], 'DE')
+test['Deck'] = test['Deck'].replace(['F', 'G'], 'FG')
+
+#Handling Embarked Missing Value
+train[train['Embarked'].isnull()]
+test[test['Embarked'].isnull()]
+
+# Checking for Passengers who were in Pclass 1, on Deck ABC and paid 80 or less for the Tickets
+train.loc[(train['Pclass'] == 1) & (train['Fare'] <= 80) & (train['Deck'] == 'ABC')]['Embarked'].value_counts() 
+
+# Adding the S in missing Embarked
+train.loc[train['Embarked'].isnull(), 'Embarked'] = 'S'
+
+# Handling Fare 
+test['Fare'].fillna(test['Fare'].dropna().median(), inplace=True)
+
+train['FareBand'] = pd.qcut(train['Fare'], 4)
+train[['FareBand', 'Survived']].groupby(['FareBand'], as_index = False).mean().sort_values(by = 'FareBand', ascending = True)
+
+for dataset in combine:
+    dataset.loc[ dataset['Fare'] <= 7.91, 'Fare'] = 0
+    dataset.loc[(dataset['Fare'] > 7.91) & (dataset['Fare'] <= 14.454), 'Fare'] = 1
+    dataset.loc[(dataset['Fare'] > 14.454) & (dataset['Fare'] <= 31), 'Fare']   = 2
+    dataset.loc[ dataset['Fare'] > 31, 'Fare'] = 3
+    dataset['Fare'] = dataset['Fare'].astype(int)
+
+train = train.drop(['FareBand'], axis=1)
+combine = [train, test]
+
+# Label Encoding and One hot Encoding
+non_numeric_fatures = ['Embarked', 'Sex', 'Title', 'AgeGroup', 'Fare', 'Deck']
