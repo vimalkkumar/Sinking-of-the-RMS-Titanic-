@@ -141,4 +141,8 @@ ohe(test)
 test = pd.concat([test, *encoded_features], axis = 1)
 
 # Exporting the Train and Test dataset features after feature Engineering in one CSV File
-train.to_csv('Dataset/titanic_train_after_.csv', index = False)
+train.to_csv('Dataset/titanic_train_after_fe.csv', index = False)
+test.to_csv('Dataset/titanic_test_after_fe.csv', index = False)
+
+titanic_train = pd.read_csv('Dataset/titanic_train_after_fe.csv')
+titanic_test = pd.read_csv('Dataset/titanic_test_after_fe.csv')
