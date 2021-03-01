@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sbn
+from sklearn.preprocessing import LabelEncoder, OneHotEncoder
 
 train = pd.read_csv('Dataset/train.csv')
 test = pd.read_csv('Dataset/test.csv')
@@ -111,4 +112,33 @@ train = train.drop(['FareBand'], axis=1)
 combine = [train, test]
 
 # Label Encoding and One hot Encoding
-non_numeric_fatures = ['Embarked', 'Sex', 'Title', 'AgeGroup', 'Fare', 'Deck']
+non_numeric_features = ['Embarked', 'Sex', 'Title', 'AgeGroup', 'Fare', 'Deck']
+
+for feature in non_numeric_features:
+    train[feature] = LabelEncoder().fit_transform(train[feature])
+    test[feature] = LabelEncoder().fit_transform(test[feature])
+
+cat_features = ['Pclass', 'Sex', 'SibSp', 'Parch', 'Embarked', 'Title', 'Deck', 'AgeGroup', 'Fare']
+
+encoded_features = []
+    
+def ohe(dataset):
+    for feature in cat_features:
+        encoded_feat = OneHotEncoder().fit_transform(dataset[feature].values.reshape(-1,1)).toarray()
+        n = dataset[feature].nunique()
+        cols = ['{}_{}'.format(feature, n) for n in range(1, n+1)]
+        encoded_df = pd.DataFrame(encoded_feat, columns = cols)
+        encoded_df.index = dataset.index
+        encoded_features.append(encoded_df)
+        
+# For Train Dataset
+ohe(train)    
+train = pd.concat([train, *encoded_features], axis = 1)
+
+encoded_features = []
+# For Test dataset
+ohe(test)    
+test = pd.concat([test, *encoded_features], axis = 1)
+
+# Exporting the Train and Test dataset features after feature Engineering in one CSV File
+train.to_csv('Dataset/titanic_train_after_.csv', index = False)
