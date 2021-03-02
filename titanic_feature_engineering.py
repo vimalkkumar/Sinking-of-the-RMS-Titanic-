@@ -47,7 +47,7 @@ test['AgeGroup'] = pd.cut(test["Age"], bins, labels = labels)
 
 # Filling the Missing Age using Median Age for each age group
 master_age = train[train['Title'] == 0]["AgeGroup"].mode() #Baby
-miss_age = train[train['Title'] == 1]["AgeGroup"].mode() #Student or Adult
+miss_age = train[train['Title'] == 1]["AgeGroup"].mode() #Student 
 mr_age = train[train['Title'] == 2]["AgeGroup"].mode() #Adult
 mrs_age = train[train['Title'] == 3]["AgeGroup"].mode() # Young Adult
 rage_age = train[train['Title'] == 4]["AgeGroup"].mode() #Adult
