@@ -13,6 +13,7 @@ from sklearn.svm import SVC
 from sklearn.svm import LinearSVC
 from sklearn.linear_model import Perceptron
 from sklearn.naive_bayes import GaussianNB
+from sklearn.linear_model import SGDClassifier
 
 train = pd.read_csv('Dataset/titanic_train_after_fe.csv')
 test = pd.read_csv('Dataset/titanic_test_after_fe.csv')
@@ -155,7 +156,7 @@ gnb_classifier = GaussianNB()
 gnb_classifier.fit(features, target)
 gnb_predict = gnb_classifier.predict(test)
 
-# It's time to Measure the performance of the Perceptron Model
+# It's time to Measure the performance of the Gaussion Naive Bayes Model
 gnb_cm = confusion_matrix(result, gnb_predict)
 print('Gaussion Naive Bayes Model\'s Confusion Matrix : {}'.format(gnb_cm))
 gnb_accuracy = accuracy_score(result, gnb_predict)
@@ -166,3 +167,20 @@ gnb_precision = precision_score(result, gnb_predict)
 print('Gaussion Naive Bayes Model\'s Precision Score : {:.2f}'.format(gnb_precision*100))
 gnb_recall = recall_score(result, gnb_predict)
 print('Gaussion Naive Bayes Model\'s Recall Score : {:.2f}'.format(gnb_recall*100))
+
+# Implementing the Stochastic Gradient Descent (SGDClassifier) Model
+sgd_classifier = SGDClassifier()
+sgd_classifier.fit(features, target)
+sgd_predict = sgd_classifier.predict(test)
+
+# It's time to Measure the performance of the Stochastic Gradient Descent (SGDClassifier) Model
+sgd_cm = confusion_matrix(result, sgd_predict)
+print('SGDClassifier Model\'s Confusion Matrix : {}'.format(sgd_cm))
+sgd_accuracy = accuracy_score(result, sgd_predict)
+print('SGDClassifier Model\'s Accuracy Score : {:.2f}'.format(sgd_accuracy*100))
+sgd_f1 = f1_score(result, sgd_predict)
+print('SGDClassifier Model\'s F1 Score : {:.2f}'.format(sgd_f1*100))
+sgd_precision = precision_score(result, sgd_predict)
+print('SGDClassifier Model\'s Precision Score : {:.2f}'.format(sgd_precision*100))
+sgd_recall = recall_score(result, sgd_predict)
+print('SGDClassifier Model\'s Recall Score : {:.2f}'.format(sgd_recall*100))
