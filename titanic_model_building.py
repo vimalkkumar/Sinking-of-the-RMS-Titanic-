@@ -14,6 +14,7 @@ from sklearn.svm import LinearSVC
 from sklearn.linear_model import Perceptron
 from sklearn.naive_bayes import GaussianNB
 from sklearn.linear_model import SGDClassifier
+from sklearn.ensemble import GradientBoostingClassifier
 
 train = pd.read_csv('Dataset/titanic_train_after_fe.csv')
 test = pd.read_csv('Dataset/titanic_test_after_fe.csv')
@@ -168,6 +169,7 @@ print('Gaussion Naive Bayes Model\'s Precision Score : {:.2f}'.format(gnb_precis
 gnb_recall = recall_score(result, gnb_predict)
 print('Gaussion Naive Bayes Model\'s Recall Score : {:.2f}'.format(gnb_recall*100))
 
+
 # Implementing the Stochastic Gradient Descent (SGDClassifier) Model
 sgd_classifier = SGDClassifier()
 sgd_classifier.fit(features, target)
@@ -184,3 +186,34 @@ sgd_precision = precision_score(result, sgd_predict)
 print('SGDClassifier Model\'s Precision Score : {:.2f}'.format(sgd_precision*100))
 sgd_recall = recall_score(result, sgd_predict)
 print('SGDClassifier Model\'s Recall Score : {:.2f}'.format(sgd_recall*100))
+
+
+# Implementing the Gradient Boosting Classifier Model
+gb_classifier = GradientBoostingClassifier()
+gb_classifier.fit(features, target)
+gb_predict = gb_classifier.predict(test)
+
+# It's time to Measure the performance of the Gradient Boosting Classifier Model
+gb_cm = confusion_matrix(result, gb_predict)
+print('Gradient Boosting Classifier Model\'s Confusion Matrix : {}'.format(gb_cm))
+gb_accuracy = accuracy_score(result, gb_predict)
+print('Gradient Boosting Classifier Model\'s Accuracy Score : {:.2f}'.format(gb_accuracy*100))
+gb_f1 = f1_score(result, gb_predict)
+print('Gradient Boosting Classifier Model\'s F1 Score : {:.2f}'.format(gb_f1*100))
+gb_precision = precision_score(result, gb_predict)
+print('Gradient Boosting Classifier Model\'s Precision Score : {:.2f}'.format(gb_precision*100))
+gb_recall = recall_score(result, gb_predict)
+print('Gradient Boosting Classifier Model\'s Recall Score : {:.2f}'.format(gb_recall*100))
+
+models = pd.DataFrame({
+    'Model': ['Logistic Regression', 'KNN', 'Decision Tree', 'Random Forest', 'Support Vector Machines', 
+              'Linear SVC',  'Perceptron', 'Naive Bayes', 'Stochastic Gradient Decent', 'Gradient Boosting'],
+    'Accuracy Score': [lgr_accuracy, knn_accuracy, dt_accuracy, rf_accuracy, svc_accuracy, 
+              lsvc_accuracy, p_accuracy, gnb_accuracy, sgd_accuracy, gb_accuracy],
+    'f1 Score': [lgr_f1, knn_f1, dt_f1, rf_f1, svc_f1, lsvc_f1, p_f1, gnb_f1, sgd_f1, gb_f1],
+    'Precision Score': [lgr_precision, knn_precision, dt_precision, rf_precision, svc_precision,
+                        lsvc_precision, p_precision, gnb_precision, sgd_precision, gb_precision],
+    'Recall Score': [lgr_recall, knn_recall, dt_recall, rf_recall, svc_recall, lsvc_recall,
+                     p_recall, gnb_recall, sgd_recall, gb_recall]})
+models = models.sort_values(by=['Accuracy Score', 'f1 Score', 'Precision Score', 'Recall Score'], ascending=False)
+
