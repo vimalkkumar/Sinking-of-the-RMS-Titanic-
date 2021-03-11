@@ -31,10 +31,10 @@ test_features = test[['Pclass', 'Sex', 'SibSp', 'Parch', 'Fare', 'Embarked', 'Ti
 train_target = train['Survived']
 train_features = train.drop(['Survived'], axis = 1)
 
-# Standard Scaler for scaling the features value
-sc = StandardScaler()
-train_features = sc.fit_transform(train_features)
-test_features = sc.transform(test_features)
+# # Standard Scaler for scaling the features value
+# sc = StandardScaler()
+# train_features = sc.fit_transform(train_features)
+# test_features = sc.transform(test_features)
 
 # Implementing the Logistic Regression
 lg_regressor = LogisticRegression()
@@ -225,14 +225,14 @@ svc_cvs = cross_val_score(estimator = svc_classifier, X = train_features, y = tr
 print('Accuracy\'s Mean of SVC Model : {:.2f}'.format(svc_cvs.mean()*100))
 print('Accuracy\'s Standard Deviation of SVC Model : {:.2f}'.format(svc_cvs.std()*100))
 
-def f_importances(coef, names):
-    imp = coef
-    imp,names = zip(*sorted(zip(imp,names)))
-    plt.barh(range(len(names)), imp, align='center')
-    plt.yticks(range(len(names)), names)
-    plt.show()
+# def f_importances(coef, names):
+#     imp = coef
+#     imp,names = zip(*sorted(zip(imp,names)))
+#     plt.barh(range(len(names)), imp, align='center')
+#     plt.yticks(range(len(names)), names)
+#     plt.show()
 
-svc_classifier = SVC(kernel='linear')
-svc_classifier.fit(train_features, train_target)
-features_name = ['Pclass', 'Sex', 'SibSp', 'Parch', 'Fare', 'Embarked', 'Title', 'AgeGroup', 'Deck']
-f_importances = f_importances(svc_classifier.coef_, features_name)
+# svc_classifier = SVC(kernel='linear')
+# svc_classifier.fit(train_features, train_target)
+# features_name = ['Pclass', 'Sex', 'SibSp', 'Parch', 'Fare', 'Embarked', 'Title', 'AgeGroup', 'Deck']
+# f_importances = f_importances(svc_classifier.coef_, features_name)
