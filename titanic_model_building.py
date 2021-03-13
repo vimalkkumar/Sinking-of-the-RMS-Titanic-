@@ -251,7 +251,11 @@ for i in range(4):
 parameters = {'kernel': ['rbf', 'sigmoid', 'poly'],
               'C': [0.1, 1, 10],
               'gamma': [1, 0.1, 0.01, 0.001, 0.0001]}
-grid = GridSearchCV(SVC(), parameters, refit = True, verbose = 2)
+grid = GridSearchCV(SVC(), parameters, refit = True,  scoring='accuracy', verbose = 2)
 grid.fit(train_features, train_target)
 
 print(grid.best_estimator_)
+
+grid_predict = grid.predict(test_features)
+
+print(classification_report(test_target, grid_predict))
