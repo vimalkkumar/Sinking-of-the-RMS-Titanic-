@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 import seaborn as sbn 
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score, confusion_matrix
-from sklearn.model_selection import cross_val_score
+from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score, confusion_matrix, classification_report, precision_recall_curve, average_precision_score
+from sklearn.model_selection import cross_val_score, GridSearchCV
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
@@ -225,14 +225,33 @@ svc_cvs = cross_val_score(estimator = svc_classifier, X = train_features, y = tr
 print('Accuracy\'s Mean of SVC Model : {:.2f}'.format(svc_cvs.mean()*100))
 print('Accuracy\'s Standard Deviation of SVC Model : {:.2f}'.format(svc_cvs.std()*100))
 
-# def f_importances(coef, names):
-#     imp = coef
-#     imp,names = zip(*sorted(zip(imp,names)))
-#     plt.barh(range(len(names)), imp, align='center')
-#     plt.yticks(range(len(names)), names)
-#     plt.show()
+# Its time to check the kernel performance and its classification report
+svc_class_report = classification_report(test_target, svc_predict)
+print(svc_class_report)
 
-# svc_classifier = SVC(kernel='linear')
-# svc_classifier.fit(train_features, train_target)
-# features_name = ['Pclass', 'Sex', 'SibSp', 'Parch', 'Fare', 'Embarked', 'Title', 'AgeGroup', 'Deck']
-# f_importances = f_importances(svc_classifier.coef_, features_name)
+kernels = ['linear' ,'polynomial', 'rbf', 'sigmoid']
+def get_classifier(ktype):
+    if ktype == 0:
+        return SVC(kernel = 'linear', gamma = 'auto')
+    if ktype == 1:
+        return SVC(kernel = 'poly', degree = 10, gamma = 'auto')
+    if ktype == 2:
+        return SVC(kernel = 'rbf', gamma = 'auto')
+    if ktype == 3:
+        return SVC(kernel = 'sigmoid', gamma = 'auto')
+
+for i in range(4):
+    svc_classifier_ktype = get_classifier(i)
+    svc_classifier_ktype.fit(train_features, train_target)
+    svc_classifier_ktype_predict = svc_classifier_ktype.predict(test_features)
+    print('Evaluation: ', kernels[i], 'Kernel')
+    print(classification_report(test_target, svc_classifier_ktype_predict))
+    
+# It's time to tune the hyper-parameters for SVC model (Tunning for Kernel, C(Regularisation) and gamma)
+parameters = {'kernel': ['rbf', 'sigmoid', 'poly'],
+              'C': [0.1, 1, 10],
+              'gamma': [1, 0.1, 0.01, 0.001, 0.0001]}
+grid = GridSearchCV(SVC(), parameters, refit = True, verbose = 2)
+grid.fit(train_features, train_target)
+
+print(grid.best_estimator_)
